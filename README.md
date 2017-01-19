@@ -6,7 +6,11 @@ See the presentation: [jfbastien.github.io/what-is-cpp17/](https://jfbastien.git
 
 Navigate using arrow keys (down for a section, right for the next section). Enter presentation mode, and see speaker notes, with the `S` key.
 
-# Random Information
+## Improvements?
+
+Don't like my examples? Think I missed something? Send me a PR!
+
+## Random Information
 
 * These slides borrow heavily from Bryce Adelstein Lelbach's own presentation
 * Learn more about the C++ standards process at [isocpp.org/std](https://isocpp.org/std)
