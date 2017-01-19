@@ -268,6 +268,83 @@ make_unique(Args&amp;&amp;... a) {
 </code></pre>
   </section>
   <section><iframe src="https://godbolt.org/g/IKlFO1" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/QTBkeK" class="stretch"></iframe></section>
+</section>
+
+<section>
+  <section><h1>Folding expressions</h1></section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+auto sum() { return 0; }
+
+template &lt;typename T&gt;
+auto sum(T&amp;&amp; t) { return t; }
+
+template &lt;typename T, typename... Rest&gt;
+auto sum(T&amp;&amp; t, Rest&amp;&amp;... r) {
+  return t + sum(std::forward&lt;Rest&gt;(r)...);
+}
+</code></pre>
+  </section>
+  <section><iframe src="https://godbolt.org/g/oLjcQ7" class="stretch"></iframe></section>
+  <section>
+    <h2>Will it fold?</h2>
+    <table style="font-size:60%">
+      <tr><td>Unary Right</td><td><code>(E op ...)</code></td><td>≣</td><td><code>E<sub>1</sub> op (... op (E<sub>N-1</sub> op E<sub>N</sub>))</code></td></tr>
+      <tr><td>Unary Left</td><td><code>(... op E)</code></td><td>≣</td><td><code>((E<sub>1</sub> op E<sub>2</sub>) op ...) op E<sub>N</sub></code></td></tr>
+      <tr><td>Binary Right</td><td><code>(E op ... op I)</code></td><td>≣</td><td><code>E<sub>1</sub> op (... op (E<sub>N-1</sub> op (E<sub>N</sub> op I)))</code></td></tr>
+      <tr><td>Binary Left</td><td><code>(I op ... op E)</code></td><td>≣</td><td><code>(((I op E<sub>1</sub>) op E<sub>2</sub>) op ...) op E<sub>N</sub></code></td></tr>
+    </table>
+  </section>
+  <section>
+    <h2>All binary operators are foldable</h2>
+<pre><code class="c++" data-noescape>
+        ==  !=  &lt;   &gt;   &lt;=  &gt;=  &amp;&amp;  ||  ,   .*  -&gt;*  = 
+        +   -   *   /   %   ^   &amp;   |   &lt;&lt;   &gt;&gt; 
+        +=  -=  *=  /=  %=  ^=  &amp;=  |=  &lt;&lt;=  &gt;&gt;=
+
+</code></pre>
+  <aside class="notes">
+    For unary fold expressions, if the parameter packis empty then the value of the fold is:
+      && ≣ true
+      || ≣ false
+      ,  ≣ void()
+    For any operator not listed above, an unary fold expression with an empty parameter pack is ill-formed.
+  </aside>
+  </section>
+</section>
+
+<section>
+  <section><h1><code>template &lt;auto&gt;</code></h1></section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+template &lt;typename T, T v&gt;
+struct integral_constant {
+  static constexpr T value = v;
+};
+void f() { }
+
+auto w = integral_constant&lt;int, 2048&gt;;
+auto x = integral_constant&lt;char, 'a'&gt;;
+auto y = integral_constant&lt;bool, true&gt;;
+auto z = integral_constant&lt;decltype(f), f&gt;;
+</code></pre>
+  </section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+template &lt;typename T, T... Elements&gt;
+struct integer_sequence { };
+
+auto seq0 = integer_sequence&lt;std::size_t, 0, 1, 2&gt;;
+auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
+</code></pre>
+  </section>
+  <section><iframe src="https://godbolt.org/g/ELGOZk" class="stretch"></iframe></section>
+</section>
+
+<section>
+  <section><h1><code>if (init; cond)</code></h1><p>and <code>switch (init; cond)</code></p></section>
+  <section><iframe src="https://godbolt.org/g/KJqUgp" class="stretch"></iframe></section>
 </section>
 
 <!--
