@@ -229,7 +229,7 @@ return std::make_tuple(-42, 3.14);
   <section>
 <pre><code class="c++" data-noescape data-trim>
 template&lt;typename T&gt;
-void g(T&amp;T&amp; t) { /* Handle one T. */ } 
+void g(T&amp;&amp; t) { /* Handle one T. */ } 
 
 template&lt;typename T, typename... Rest&gt;
 void g(T&amp;&amp; t, Rest&amp;&amp;... r) {
