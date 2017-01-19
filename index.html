@@ -204,9 +204,9 @@ auto [x, y, z] = obj;
     </ul>
   <aside class="notes">STL destructurable types: array, tuple, pair.</aside>
   </section>
-  <section><iframe src="https://godbolt.org/g/OKxHU3" class="stretch"></iframe></section>
-  <section><iframe src="https://godbolt.org/g/6FR0w5" class="stretch"></iframe></section>
-  <section><iframe src="https://godbolt.org/g/wIQcVN" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/OE63nN" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/xuhEVw" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/l1hgnp" class="stretch"></iframe></section>
 </section>
 
 <section>
@@ -238,7 +238,7 @@ void g(T&amp;&amp; t, Rest&amp;&amp;... r) {
 }
 </code></pre>
   </section>
-  <section><iframe src="https://godbolt.org/g/Jk0qLJ" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/S4JVax" class="stretch"></iframe></section>
   <section>
 <pre><code class="c++" data-trim>
 if constexpr (cond1)
@@ -276,7 +276,7 @@ make_unique(Args&amp;&amp;... a) {
 </code></pre>
   </section>
   <section><iframe src="https://godbolt.org/g/IKlFO1" class="stretch"></iframe></section>
-  <section><iframe src="https://godbolt.org/g/QTBkeK" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/8fN3Aa" class="stretch"></iframe></section>
 </section>
 
 <section>
@@ -294,7 +294,7 @@ auto sum(T&amp;&amp; t, Rest&amp;&amp;... r) {
 }
 </code></pre>
   </section>
-  <section><iframe src="https://godbolt.org/g/oLjcQ7" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/FGWVIb" class="stretch"></iframe></section>
   <section>
     <h2>Will it fold?</h2>
     <table style="font-size:60%">
@@ -347,12 +347,12 @@ auto seq0 = integer_sequence&lt;std::size_t, 0, 1, 2&gt;;
 auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
 </code></pre>
   </section>
-  <section><iframe src="https://godbolt.org/g/ELGOZk" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/0X1aB8" class="stretch"></iframe></section>
 </section>
 
 <section>
   <section><h1><code>if (init; cond)</code></h1><p>and <code>switch (init; cond)</code></p></section>
-  <section><iframe src="https://godbolt.org/g/KJqUgp" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/vZZrsw" class="stretch"></iframe></section>
 </section>
 
 <section>
@@ -374,9 +374,9 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
         </ul>
     </ul>
   </section>
-  <section><iframe src="https://godbolt.org/g/03HBSK" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/OuhmjZ" class="stretch"></iframe></section>
   <section>
-    <p>Exception versus error-code APIs:</p>
+    <p>Exception versus error-code: why not both? 🤷</p>
     <ul>
       <li><code>void copy(fs::path const&amp; from, fs::path&amp; to);</code>
       <li><code>void copy(fs::path const&amp; from, fs::path&amp; to, std::error_code&amp; ec);</code>
@@ -408,7 +408,7 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
       <li>Pointer-like API
     </ul>
   </section>
-  <section><iframe src="https://godbolt.org/g/zv3wCJ" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/Vj4a5D" class="stretch"></iframe></section>
 </section>
 
 <section>
@@ -421,7 +421,7 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
       <li>Visitor-style access
     </ul>
   </section>
-  <section><iframe src="https://godbolt.org/g/Vj15x6" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/Asw9Xy" class="stretch"></iframe></section>
 </section>
 
 <section>
@@ -477,7 +477,10 @@ std::transform(std::par_unseq, xfirst, xlast, yfirst,
     </ul>
     <aside class="notes">"Executors" will expand execution policies</aside>
   </section>
-  <section><p>See <a href="https://www.youtube.com/watch?v=6Z3_qaFYF84">Hartmut Kaiser's CppCon talk</a>!</p></section>
+  <section>
+    <p>See <a href="https://www.youtube.com/watch?v=6Z3_qaFYF84">Hartmut Kaiser's CppCon talk</a>!<small>(<a href="https://github.com/CppCon/CppCon2016/blob/master/Presentations/Parallelism%20in%20Modern%20C++/Parallelism%20in%20Modern%20C++%20-%20Hartmut%20Kaiser%20-%20CppCon%202016.pdf">slides</a>)</small></p>
+    <p><small>He dives deep into C++ parallel algorithms, their performance, and where he thinks they'll go. Especially cool: parallel algorithms combined with <code>auto</code>-lambda, SIMD, executors, and coroutines.</small></p>
+  </section>
 </section>
 
 <section>
