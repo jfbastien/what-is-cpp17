@@ -201,17 +201,85 @@ auto [x, y, z] = obj;
   <section><iframe src="https://godbolt.org/g/wIQcVN" class="stretch"></iframe></section>
 </section>
 
+<section>
+  <section><h1>Constructor Template Argument Deduction</h1></section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+std::tuple&lt;int, double&gt; t(-42, 3.14);
+auto t = std::make_tuple(-42, 3.14);
+</code></pre>
+<pre><code class="c++" data-noescape data-trim>
+return std::tuple&lt;int, double&gt;(-42, 3.14);
+return std::make_tuple(-42, 3.14);
+</code></pre>
+  </section>
+  <section><iframe src="https://godbolt.org/g/jGyzz2" class="stretch"></iframe></section>
+</section>
+
+<section>
+  <section><h1><code>if constexpr</code></h1></section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+template&lt;typename T&gt;
+void g(T&amp;T&amp; t) { /* Handle one T. */ } 
+
+template&lt;typename T, typename... Rest&gt;
+void g(T&amp;&amp; t, Rest&amp;&amp;... r) {
+  g(std::forward&lt;&gt;(t));
+  g(std::forward&lt;Rest&gt;(r)...);
+}
+</code></pre>
+  </section>
+  <section><iframe src="https://godbolt.org/g/Jk0qLJ" class="stretch"></iframe></section>
+  <section>
+<pre><code class="c++" data-trim>
+if constexpr (cond1)
+  statement1;
+else if constexpr (cond2)
+  statement2;
+else
+  statement3;
+</code></pre>
+  </section>
+  <section>
+    <h2>Consider this</h2>
+<pre><code class="c++" data-noescape data-trim>
+template&lt;typename T, typename... Args&gt;
+std::unique_ptr&lt;T&gt; make_unique(Args&amp;&amp;... a);
+</code></pre>
+  </section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+template&lt;typename T, typename... Args&gt; 
+std::enable_if_t&lt;
+  std::is_constructible_v&lt;T, Args...&gt;, std::unique_ptr&lt;T&gt;
+&gt; 
+make_unique(Args&amp;&amp;... a) {
+  return std::unique_ptr(new T(std::forward&lt;Args&gt;(a)...));
+}  
+
+template&lt;typename T, typename... Args&gt;  
+std::enable_if_t&lt;
+  !std::is_constructible_v&lt;T, Args...&gt;, std::unique_ptr&lt;T&gt;
+&gt;
+make_unique(Args&amp;&amp;... a) {
+  return std::unique_ptr(new T{std::forward&lt;Args&gt;(a)...});
+}
+</code></pre>
+  </section>
+  <section><iframe src="https://godbolt.org/g/IKlFO1" class="stretch"></iframe></section>
+</section>
+
 <!--
   <aside class="notes"></aside>
 
   <section>
-<pre><code class="c++">
+<pre><code class="c++" data-trim>
 </code></pre>
   </section>
 
   <section>
-<pre class="fragment"><code class="c++" data-noescape>
-<pre><code class="c++">
+<pre><code class="c++" data-noescape data-trim>
 </code></pre>
   </section>
 -->
