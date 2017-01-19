@@ -48,6 +48,10 @@
     <p><small>(If everything goes well)</small></p>
     <p><a href="http://wg21.link/N4618">📑 current draft</a></p>
   </section>
+  <section>
+    <h2>When can I use it?</h2>
+    <iframe src="http://en.cppreference.com/w/cpp/compiler_support" class="stretch"></iframe>
+  </section>
 </section>
 
 <section>
@@ -98,6 +102,7 @@
 <section>
   <section><h1>Structured binding</h1></section>
   <section>
+    <p>Do you do this often?</p>
 <pre><code class="c++" data-trim>
 void g(T t) {
   auto x = t.x;
@@ -109,6 +114,7 @@ void g(T t) {
   <aside class="notes">The destructuring problem: how do we assign convenient names to the components of a tuple-like struct?</aside>
   </section>
   <section>
+    <p>How about this?</p>
 <pre><code class="c++" data-trim>
 void g(T& t) {
   auto& x = t.x;
@@ -120,6 +126,7 @@ void g(T& t) {
   <aside class="notes">We may want those names to have reference semantics instead of value semantics, too!</aside>
   </section>
   <section>
+    <p>Ain't this beautiful?</p>
 <pre><code class="c++" data-noescape data-trim>
 std::tuple&lt;T1, T2, T3&gt; f();
 
@@ -132,6 +139,7 @@ std::tie(x, y, z) = f();
 </aside>
   </section>
   <section>
+    <p>Oops-prone...</p>
 <pre><code class="c++" data-noescape data-trim>
 std::tuple&lt;T1, T2, T3&gt; f();
 
@@ -347,22 +355,217 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
   <section><iframe src="https://godbolt.org/g/KJqUgp" class="stretch"></iframe></section>
 </section>
 
-<!--
-  <aside class="notes"></aside>
-
+<section>
   <section>
+    <h2><code>&lt;filesystem&gt;</code></h2>
+    <pre><code class="c++" data-trim>namespace fs = std::filesystem;</code></pre>
+  </section>
+  <section>
+    <ul>
+      <li>Based on <code>boost.filesystem</code>
+      <li>Somewhat POSIX
+      <li>ToCToU races included 😫
+      <li>Non-member functions taking paths
+        <ul>
+          <li><code>fs::path</code>
+          <li><code>fs::directory_entry</code>
+          <li><code>fs::directory_iterator</code>
+          <li><code>fs::file_status</code>
+        </ul>
+    </ul>
+  </section>
+  <section><iframe src="https://godbolt.org/g/03HBSK" class="stretch"></iframe></section>
+  <section>
+    <p>Exception versus error-code APIs:</p>
+    <ul>
+      <li><code>void copy(fs::path const&amp; from, fs::path&amp; to);</code>
+      <li><code>void copy(fs::path const&amp; from, fs::path&amp; to, std::error_code&amp; ec);</code>
+    </ul>
+  </section>
+</section>
+
+<section>
+  <section><h2><code>std::string_view</code></h2></section>
+  <section>
+  <p>A better <code>const char*</code></p>
+    <ul>
+      <li>Similar to <code>std::string</code> API
+      <li>Non-owning pointer + length
+      <li>No allocation
+      <li>Value semantics
+      <li>Can't modify contents
+    </ul>
+  </section>
+</section>
+
+<section>
+  <section><h2><code>std::optional&lt;&gt;</code></h2></section>
+  <section>
+    <ul>
+      <li>Nullable object wrapper
+      <li>No allocation
+      <li>Value semantics
+      <li>Pointer-like API
+    </ul>
+  </section>
+  <section><iframe src="https://godbolt.org/g/zv3wCJ" class="stretch"></iframe></section>
+</section>
+
+<section>
+  <section><h2><code>std::variant&lt;&gt;</code></h2></code></section>
+  <section>
+    <ul>
+      <li>Discrimnate union
+      <li>No allocation
+      <li>Value semantics
+      <li>Visitor-style access
+    </ul>
+  </section>
+  <section><iframe src="https://godbolt.org/g/Vj15x6" class="stretch"></iframe></section>
+</section>
+
+<section>
+  <section><h1>Parallel Algorithms</h1></section>
+  <section>
+      <p>Many STL algorithms, with parallel / vector</p>
 <pre><code class="c++" data-trim>
+std::for_each(std::par, first, last,
+    [](auto&amp; x){ process(x); }
+);
+std::copy(std::par, first, last);
+std::sort(std::par, first, last);
+std::transform(std::par_unseq, xfirst, xlast, yfirst,
+    [=](double xi, double yi){ return a * xi + yi; }
+);
 </code></pre>
   </section>
-
   <section>
-<pre><code class="c++" data-noescape data-trim>
-</code></pre>
+    <code>
+    <table style="font-size:40%">
+<tr><td>adjacent_difference           </td><td>is_heap_until             </td><td>replace_copy_if           </td></tr>
+<tr><td>adjacent_find                 </td><td>is_partitioned            </td><td>replace_if                </td></tr>
+<tr><td>all_of                        </td><td>is_sorted                 </td><td>reverse                   </td></tr>
+<tr><td>any_of                        </td><td>is_sorted_until           </td><td>reverse_copy              </td></tr>
+<tr><td>copy                          </td><td>lexicographical_compare   </td><td>rotate                    </td></tr>
+<tr><td>copy_if                       </td><td>max_element               </td><td>rotate_copy               </td></tr>
+<tr><td>copy_n                        </td><td>merge                     </td><td>search                    </td></tr>
+<tr><td>count                         </td><td>min_element               </td><td>search_n                  </td></tr>
+<tr><td>count_if                      </td><td>minmax_element            </td><td>set_difference            </td></tr>
+<tr><td>equal                         </td><td>mismatch                  </td><td>set_intersection          </td></tr>
+<tr><td>fill                          </td><td>move                      </td><td>set_symmetric_difference  </td></tr>
+<tr><td>fill_n                        </td><td>none_of                   </td><td>set_union                 </td></tr>
+<tr><td>find                          </td><td>nth_element               </td><td>sort                      </td></tr>
+<tr><td>find_end                      </td><td>partial_sort              </td><td>stable_partition          </td></tr>
+<tr><td>find_first_of                 </td><td>partial_sort_copy         </td><td>stable_sort               </td></tr>
+<tr><td>find_if                       </td><td>partition                 </td><td>swap_ranges               </td></tr>
+<tr><td>find_if_not                   </td><td>partition_copy            </td><td>transform                 </td></tr>
+<tr><td>generate                      </td><td>remove                    </td><td>uninitialized_copy        </td></tr>
+<tr><td>generate_n                    </td><td>remove_copy               </td><td>uninitialized_copy_n      </td></tr>
+<tr><td>includes                      </td><td>remove_copy_if            </td><td>uninitialized_fill        </td></tr>
+<tr><td>inner_product                 </td><td>remove_if                 </td><td>uninitialized_fill_n      </td></tr>
+<tr><td>inplace_merge                 </td><td>replace                   </td><td>unique                    </td></tr>
+<tr><td>is_heap                       </td><td>replace_copy              </td><td>unique_copy               </td></tr>
+    </table>
+    </code>
   </section>
--->
+  <section>
+    <p>Execution policies:</p>
+    <ul>
+      <li><code>std::seq</code> indeterminately sequenced in the calling thread
+      <li><code>std::par</code> indeterminately sequenced with respect to each other within the same thread
+      <li><code>std::par_unseq</code> unsequenced with respect to each other and possibly interleaved
+    </ul>
+    <aside class="notes">"Executors" will expand execution policies</aside>
+  </section>
+  <section><p>See <a href="https://www.youtube.com/watch?v=6Z3_qaFYF84">Hartmut Kaiser's CppCon talk</a>!</p></section>
+</section>
+
+<section>
+  <section>
+    <h1>What's in it?</h1>
+    <p>Here's what we covered</p>
+  </section>
+  <section>
+    <h1>Language</h1>
+    <ul style="font-size:60%;list-style:none;">
+      <li>☑ Structured bindings
+      <li>☑ <code>if constexpr</code>
+      <li>☐ <code>constexpr</code> lambdas
+      <li>☐ Inline variables
+      <li>☑ Folding expressions
+      <li>☑ <code>template &lt;auto&gt;</code>
+      <li>☑ Constructor template argument deduction
+      <li>☐ Guaranteed copy elision
+      <li>☐ <code>noexcept</code> added to the type system
+      <li>☑ <code>if (init; cond)</code> and <code>switch (init; cond)</code>
+      <li>☐ <code>namespace A::B::C {}</code>
+      <li>☐ Single-parameter <code>static_assert()</code>
+      <li>☐ <code>__has_include()</code>
+    </ul>
+  </section>
+  <section>
+    <h1>Library</h1>
+    <ul style="font-size:60%;list-style:none;">
+      <li>☑ <code>&lt;filesystem&gt;</code>
+      <li>☐ <code>&lt;memory_resource&gt;</code>
+      <li>☑ <code>string_view</code>
+      <li>☑ <code>optional&lt;&gt;</code>
+      <li>☑ <code>variant&lt;&gt;</code>
+      <li>☐ <code>any</code>
+      <li>☑ Parallel algorithms
+      <li>☐ Aligned <code>new</code>
+      <li>☐ <code>shared_mutex</code> and variadic <code>lock_guard&lt;&gt;</code>
+      <li>☐ Math special functions
+      <li>☐ <code>invoke()</code>, <code>apply()</code>, and <code>is_callable&lt;&gt;</code>
+      <li>☐ <code>*_v&lt;&gt;</code> variable templates for type traits
+      <li>☐ <code>conjunction&lt;&gt;</code>, <code>disjunction&lt;&gt;</code>, and <code>negation&lt;&gt;</code>
+    </ul>
+  </section>
+  <section><h2>More we didn't talk about...</h2></section>
+  <section>
+    <h1>Language</h1>
+    <ul style="font-size:50%">
+      <li>C99 base → C11 base
+      <li>Specified expression evaluation order
+      <li>Forward progress guarantees
+      <li>Attributes on namespaces and enums 
+      <li><code>[[fallthrough]]</code>, <code>[[nodiscard]]</code>, and <code>[[maybe_unused]]</code>
+      <li>UTF-8 character
+      <li>Hexadecimal floating point literals
+      <li>Generalized range-based <code>for</code>
+      <li>Lambda capture of <code>*this</code> by value
+      <li><code>auto a{b};</code> will not initialize <code>initializer_list<></code>
+      <li>Removed trigraphs, <code>operator++(bool)</code>, and <code>register</code>
+    </ul>
+  </section>
+  <section>
+    <h1>Library</h1>
+    <ul style="font-size:50%">
+      <li><code>destroy_*()</code> and new <code>uninitialized_*()</code> utilities
+      <li>Splicing and improved insertion for associative containers
+      <li><code>.is_always_lockfree()</code>
+      <li><code>hardware_*_interference_size</code>
+      <li><code>uncaught_exceptions()</code>
+      <li>Improved conversions in <code>unique_ptr&lt;&gt;</code>
+      <li><code>owner_less&lt:void&gt;</code>
+      <li><code>noexcept</code> cleanup for allocators and containers
+      <li>ContiguousIterator concept
+      <li><code>as_const()</code>, <code>clamp()</code>, <code>sample()</code>, <code>search()</code>, and searchers
+      <li>non-<code>const string::data()</code>
+      <li>Incomplete type support for <code>vector&lt;&gt;</code> and <code>lists</code>
+      <li>Non-member <code>size()</code>, <code>empty()</code>, and <code>data()</code>
+      <li><code>void_t&lt;&gt;</code> and <code>bool_constant&lt;&gt;</code>
+      <li><code>floor()</code>, <code>ceil()</code>, <code>round()</code>, and <code>abs()</code> for <code>&lt;chrono&gt;</code> types
+      <li>Removed <code>auto_ptr&lt;&gt;</code> and <code>random_shuffle()</code>
+      <li>Removed C++98 function objects and binders
+    </ul>
+  </section>
+</section>
 
 <section>
   <h1>🎊 C++17 🎉</h1>
+  <br>
+  <p>Now compiling in toolchains near you!</p>
   <br>
   <p>These slides:</p>
   <p><a href="https://github.com/jfbastien/what-is-cpp17">github.com/jfbastien/what-is-cpp17</a></p>
