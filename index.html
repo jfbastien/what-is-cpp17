@@ -4,10 +4,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>What's in C++17?</title>
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/theme/league.css">
 
 		<!-- Theme used for syntax highlighting of code -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -24,8 +24,205 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+
+<section>
+  <h1>What's in C++17?</h1>
+  <p>JF Bastien &lt;<a href="https://twitter.com/jfbastien">@jfbastien</a>&gt;</p>
+  <p><small>Slides borrow heavily from Bryce Adelstein Lelbach &lt;<a href="https://twitter.com/blelbach">@blelbach</a>&gt;</small></p>
+</section>
+
+<section>
+  <section>
+    <h1>The Standards Process</h1>
+    <p><a href="https://isocpp.org/std">isocpp.org/std</a></p>
+  </section>
+  <section>
+    <img src="wg21-timeline.png">
+  </section>
+  <section>
+    <h2>When is it coming?</h2>
+    <ol>
+      <li>Ballot resolution in February
+      <li>Officially adopted in July
+    </ol>
+    <p><small>(If everything goes well)</small></p>
+    <p><a href="http://wg21.link/N4618">📑 current draft</a></p>
+  </section>
+</section>
+
+<section>
+  <section><h1>What's in it?</h1></section>
+  <section>
+    <h1>Language</h1>
+    <ul style="font-size:60%">
+      <li>Structured bindings
+      <li><code>if constexpr</code>
+      <li><code>constexpr</code> lambdas
+      <li>Inline variables
+      <li>Folding expressions
+      <li><code>template &lt;auto&gt;</code>
+      <li>Constructor template argument deduction
+      <li>Guaranteed copy elision
+      <li><code>noexcept</code> added to the type system
+      <li><code>if (init; cond)</code> and <code>switch (init; cond)</code>
+      <li><code>namespace A::B::C {}</code>
+      <li>Single-parameter <code>static_assert()</code>
+      <li><code>__has_include()</code>
+    </ul>
+  </section>
+  <section>
+    <h1>Library</h1>
+    <ul style="font-size:60%">
+      <li><code>&lt;filesystem&gt;</code>
+      <li><code>&lt;memory_resource&gt;</code>
+      <li><code>string_view</code>
+      <li><code>optional&lt;&gt;</code>
+      <li><code>variant&lt;&gt;</code>
+      <li><code>any</code>
+      <li>Parallel algorithms
+      <li>Aligned <code>new</code>
+      <li><code>shared_mutex</code> and variadic <code>lock_guard&lt;&gt;</code>
+      <li>Math special functions
+      <li><code>invoke()</code>, <code>apply()</code>, and <code>is_callable&lt;&gt;</code>
+      <li><code>*_v&lt;&gt;</code> variable templates for type traits
+      <li><code>conjunction&lt;&gt;</code>, <code>disjunction&lt;&gt;</code>, and <code>negation&lt;&gt;</code>
+    </ul>
+  </section>
+  <section>
+    <h1>🐞 Bug fixes 🐞</h1>
+    <br>
+    <p><small>New bugs? 🐜</small></p>
+  </section>
+</section>
+
+<section>
+  <section><h1>Structured binding</h1></section>
+  <section>
+<pre><code class="c++" data-trim>
+void g(T t) {
+  auto x = t.x;
+  auto y = t.y;
+  auto z = t.z;
+  // ...
+}
+</code></pre>
+  <aside class="notes">The destructuring problem: how do we assign convenient names to the components of a tuple-like struct?</aside>
+  </section>
+  <section>
+<pre><code class="c++" data-trim>
+void g(T& t) {
+  auto& x = t.x;
+  auto& y = t.y;
+  auto& z = t.z;
+  // ...
+}
+</code></pre>
+  <aside class="notes">We may want those names to have reference semantics instead of value semantics, too!</aside>
+  </section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+std::tuple&lt;T1, T2, T3&gt; f();
+
+T1 x; T2 y; T3 z;
+std::tie(x, y, z) = f();
+</code></pre>
+  <aside class="notes">Before C++17, the only way to do destructuring is with std::tie()
+    Problems with this:
+    The variables need to be separately declared before they are std::tie()’d.
+</aside>
+  </section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+std::tuple&lt;T1, T2, T3&gt; f();
+
+int x; T2 y; T3 z;
+std::tie(y, y, z) = f();
+</code></pre>
+  <aside class="notes">More problems:
+If the variables are PODs, they may be uninitialized.
+
+Note the bug in the std::tie() call here – we’ve passed y twice!
+We’ll get no error for this, and x will be left uninitialized</aside>
+  </section>
+  <section>
+    <p>What about:</p>
+    <ul>
+      <li>Non-default-constructible types
+      <li>Types we don't want to initialize (expensive?)
+      <li><code>const</code>
+      <li>Types with reference members
+    </ul>
+  </section>
+  <section>
+<pre><code class="c++" data-noescape data-trim>
+std::array&lt;T, 3&gt; f();
+
+T x, y, z;
+std::tie(x, y, z) = f(); // INVALID.
+</code></pre>
+  <p style="font-size:300%">😕</p>
+  </section>
+  <section>
+<pre><code class="c++" data-trim>
+struct S { T1 x; T2 y; T3 z; };
+
+S f();
+
+T1 x; T2 y; T3 z;
+std::tie(x, y, z) = f(); // INVALID.
+</code></pre>
+  <p style="font-size:300%">🤔</p>
+  </section>
+  <section>
+<pre><code class="c++" data-trim>
+auto [x, y, z] = obj;
+</code></pre>
+  <p style="font-size:300%">😁</p>
+  </section>
+  <section style="font-size:80%">
+    <p>The type of <code>obj</code> must be <em>Destructurable</em>:</p>
+    <ul>
+      <li>Either all non-static data members:
+        <ul>
+          <li>Must be public
+          <li>Must be direct members of the type or members of the same public base class of the type
+          <li>Cannot be anonymous unions
+        </ul>
+        <li>Or the type has:
+          <ul>
+            <li>An <code>obj.get&lt;&gt;()</code> method or an ADL-able <code>get&lt;&gt;(obj)</code> overload
+            <li>Specializations of <code>std::tuple_size&lt;&gt;</code> and <code>std::tuple_element&lt;&gt;</code>
+          </ul>
+    </ul>
+  <aside class="notes">STL destructurable types: array, tuple, pair.</aside>
+  </section>
+  <section><iframe src="https://godbolt.org/g/OKxHU3" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/6FR0w5" class="stretch"></iframe></section>
+  <section><iframe src="https://godbolt.org/g/wIQcVN" class="stretch"></iframe></section>
+</section>
+
+<!--
+  <aside class="notes"></aside>
+
+  <section>
+<pre><code class="c++">
+</code></pre>
+  </section>
+
+  <section>
+<pre class="fragment"><code class="c++" data-noescape>
+<pre><code class="c++">
+</code></pre>
+  </section>
+-->
+
+<section>
+  <h1>🎊 C++17 🎉</h1>
+  <br>
+  <p>These slides:</p>
+  <p><a href="https://github.com/jfbastien/what-is-cpp17">github.com/jfbastien/what-is-cpp17</a></p>
+</section>
+
 			</div>
 		</div>
 
@@ -33,18 +230,48 @@
 		<script src="js/reveal.js"></script>
 
 		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
+                        // More info https://github.com/hakimel/reveal.js#configuration
+                        Reveal.initialize({
 
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
-			});
+                                controls: false, // Display controls in the bottom right corner
+                                progress: true, // Display a presentation progress bar
+                                history: true, // Push each slide change to the browser history
+                                keyboard: true, // Enable keyboard shortcuts for navigation
+                                overview: true, // Enable the slide overview mode
+                                center: true, // Vertical centering of slides
+                                touch: true,
+                                loop: false,
+                                rtl: false,
+                                shuffle: false,
+                                fragments: true, // Turns fragments on and off globally
+                                help: true, // Flags if we should show a help overlay when the questionmark key is pressed
+                                showNotes: false, // Flags if speaker notes should be visible to all viewers
+                                autoSlide: 0,
+                                autoSlideStoppable: true, // Stop auto-sliding after user input
+                                autoSlideMethod: Reveal.navigateNext,
+                                mouseWheel: false,
+                                hideAddressBar: true,
+                                previewLinks: false, // Opens links in an iframe preview overlay
+                                transition: 'default', // none/fade/slide/convex/concave/zoom
+                                transitionSpeed: 'default', // default/fast/slow
+                                backgroundTransition: 'default', // none/fade/slide/convex/concave/zoom
+                                viewDistance: 3, // Number of slides away from the current that are visible
+                                //parallaxBackgroundImage: 'bg.jpg',
+                                //parallaxBackgroundSize: '2559px 1510px', // CSS syntax, e.g. "2100px 900px"
+                                // Number of pixels to move the parallax background per slide
+                                // - Calculated automatically unless specified
+                                // - Set to 0 to disable movement along an axis
+                                parallaxBackgroundHorizontal: null,
+                                parallaxBackgroundVertical: null,
+
+                                // More info https://github.com/hakimel/reveal.js#dependencies
+                                dependencies: [
+                                        { src: 'plugin/markdown/marked.js' },
+                                        { src: 'plugin/markdown/markdown.js' },
+                                        { src: 'plugin/notes/notes.js', async: true },
+                                        { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                                ]
+                        });
 		</script>
 	</body>
 </html>
