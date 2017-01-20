@@ -379,6 +379,7 @@ auto x = integral_constant&lt;char, 'a'&gt;;
 auto y = integral_constant&lt;bool, true&gt;;
 auto z = integral_constant&lt;decltype(f), f&gt;;
 </code></pre>
+    <p>🙄 so much repetition</p>
   </section>
   <section>
 <pre><code class="c++" data-noescape data-trim>
@@ -388,6 +389,7 @@ struct integer_sequence { };
 auto seq0 = integer_sequence&lt;std::size_t, 0, 1, 2&gt;;
 auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
 </code></pre>
+    <p>🙄 so much repetition</p>
   </section>
   <section><iframe src="https://godbolt.org/g/0X1aB8" class="stretch"></iframe></section>
 </section>
@@ -406,7 +408,7 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
     <ul>
       <li>Based on <code>boost.filesystem</code>
       <li>Somewhat POSIX
-      <li>ToCToU races included 😫
+      <li>ToCToU races included 😫 <sup><a href="https://www.google.com/#q=toctou+posix">(wat dat?)</a>
       <li>Non-member functions taking paths
         <ul>
           <li><code>fs::path</code>
@@ -438,6 +440,7 @@ auto seq1 = integer_sequence&lt;char, 'h', 'i'&gt;;
       <li>Can't modify contents
     </ul>
   </section>
+  <section><iframe src="https://godbolt.org/g/uV203U" class="stretch"></iframe></section>
 </section>
 
 <section>
