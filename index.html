@@ -216,16 +216,18 @@ auto [x, y, z] = obj;
 </section>
 
 <section>
-  <section><h1>Constructor Template Argument Deduction</h1></section>
+  <section><img src="ctad.png" class="stretch" style="border:none"></section>
   <section>
+    <p>Why won't the compiler just figure it out for me?</p>
 <pre><code class="c++" data-noescape data-trim>
 std::tuple&lt;int, double&gt; t(-42, 3.14);
-auto t = std::make_tuple(-42, 3.14);
+return std::tuple&lt;int, double&gt;(-42, 3.14);
 </code></pre>
 <pre><code class="c++" data-noescape data-trim>
-return std::tuple&lt;int, double&gt;(-42, 3.14);
+auto t = std::make_tuple(-42, 3.14);
 return std::make_tuple(-42, 3.14);
 </code></pre>
+    <p>Any why <code>make_*</code> <em>all</em> the things?</p>
   </section>
   <section><iframe src="https://godbolt.org/g/jGyzz2" class="stretch"></iframe></section>
 </section>
