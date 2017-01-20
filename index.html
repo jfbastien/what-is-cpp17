@@ -230,6 +230,31 @@ return std::make_tuple(-42, 3.14);
     <p>Any why <code>make_*</code> <em>all</em> the things?</p>
   </section>
   <section><iframe src="https://godbolt.org/g/jGyzz2" class="stretch"></iframe></section>
+  <section>
+    <h2>How does it work?</h2>
+    <ul>
+      <li>Simple declarations of variables (or variable templates) that are also
+        definitions whose declarator is a noptr-declarator (i.e. not when
+        declaring functions, template parameters, function parameters,
+        non-static data members, pointers, references etc.), and
+      <li>Explicit type conversion (functional notation)
+    </ul>
+  </section>
+  <section>
+    <p>Translated to English (when C++ is ≲ English):</p>
+<pre><code class="c++" data-noescape data-trim>
+    template&lt;class ... Ts&gt; struct X { X(Ts...) };
+    X x1{1}; // OK X&lt;int&gt;
+    X x11; // OK X&lt;&gt;
+    template&lt;class T&gt; X xv{(T*)0}; // OK decltype(xv&lt;int&gt;) == X&lt;int*&gt;
+    extern X x2; // NOT OK, needs to be a definition
+    X arr[10];   // OK X&lt;&gt;
+    X x1{1}, x2{2}; // OK, deduced to the same type X&lt;int&gt;
+    X *pointer = 0; // NOT OK
+    X &amp;&amp;reference = X&lt;int&gt;{1};
+    X function(); // NOT OK
+</code></pre>
+  </section>
 </section>
 
 <section>
