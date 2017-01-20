@@ -4,7 +4,8 @@
 
 See the presentation: [jfbastien.github.io/what-is-cpp17/](https://jfbastien.github.io/what-is-cpp17).
 
-Navigate using the ⬇️ arrow until you can't anymore, and then hit the ➡️ arrow once (and repeat).
+Navigate using the ⬇️ arrow until you can't anymore, and then hit the ➡️ arrow once (and repeat). Or just use the spacebar to navigate forward.
+
 Use the `S` key to enter presentation mode and see speaker notes.
 
 ## Improvements?
