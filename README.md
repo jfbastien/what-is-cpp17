@@ -4,11 +4,12 @@
 
 See the presentation: [jfbastien.github.io/what-is-cpp17/](https://jfbastien.github.io/what-is-cpp17).
 
-Navigate using arrow keys (down for a section, right for the next section). Enter presentation mode, and see speaker notes, with the `S` key.
+Navigate using the ⬇️ arrow until you can't anymore, and then hit the ➡️ arrow once (and repeat).
+Use the `S` key to enter presentation mode and see speaker notes.
 
 ## Improvements?
 
-Don't like my examples? Think I missed something? Send me a PR!
+Don't like my examples? Think I missed something? Send me a PR! Everything is in [index.html](index.html).
 
 ## Random Information
 
