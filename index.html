@@ -260,14 +260,17 @@ return std::make_tuple(-42, 3.14);
 <section>
   <section><h1><code>if constexpr</code></h1></section>
   <section>
+    <p>Template code is often specialized for the zero- and one-parameter case.</p>
 <pre><code class="c++" data-noescape data-trim>
+void g() { /* Zero parameters. */ } 
+
 template&lt;typename T&gt;
 void g(T&amp;&amp; t) { /* Handle one T. */ } 
 
 template&lt;typename T, typename... Rest&gt;
 void g(T&amp;&amp; t, Rest&amp;&amp;... r) {
-  g(std::forward&lt;&gt;(t));
-  g(std::forward&lt;Rest&gt;(r)...);
+  g(std::forward&lt;&gt;(t));        // One T.
+  g(std::forward&lt;Rest&gt;(r)...); // And then the Rest, recursively.
 }
 </code></pre>
   </section>
@@ -307,6 +310,7 @@ make_unique(Args&amp;&amp;... a) {
   return std::unique_ptr(new T{std::forward&lt;Args&gt;(a)...});
 }
 </code></pre>
+    <p>😵</p>
   </section>
   <section><iframe src="https://godbolt.org/g/IKlFO1" class="stretch"></iframe></section>
   <section><iframe src="https://godbolt.org/g/8fN3Aa" class="stretch"></iframe></section>
