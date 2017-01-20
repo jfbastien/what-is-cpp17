@@ -319,6 +319,7 @@ make_unique(Args&amp;&amp;... a) {
 <section>
   <section><h1>Folding expressions</h1></section>
   <section>
+    <p>Similar to <code>if constexpr</code>, template code often repeats <em>what</em> to do, or is expressed in terms of recursion.</p>
 <pre><code class="c++" data-noescape data-trim>
 auto sum() { return 0; }
 
@@ -333,7 +334,7 @@ auto sum(T&amp;&amp; t, Rest&amp;&amp;... r) {
   </section>
   <section><iframe src="https://godbolt.org/g/FGWVIb" class="stretch"></iframe></section>
   <section>
-    <h2>Will it fold?</h2>
+    <h2>🌀 Will it fold? 🌀</h2>
     <table style="font-size:60%">
       <tr><td>Unary Right</td><td><code>(E op ...)</code></td><td>≣</td><td><code>E<sub>1</sub> op (... op (E<sub>N-1</sub> op E<sub>N</sub>))</code></td></tr>
       <tr><td>Unary Left</td><td><code>(... op E)</code></td><td>≣</td><td><code>((E<sub>1</sub> op E<sub>2</sub>) op ...) op E<sub>N</sub></code></td></tr>
@@ -349,13 +350,17 @@ auto sum(T&amp;&amp; t, Rest&amp;&amp;... r) {
         +=  -=  *=  /=  %=  ^=  &amp;=  |=  &lt;&lt;=  &gt;&gt;=
 
 </code></pre>
-  <aside class="notes">
-    For unary fold expressions, if the parameter packis empty then the value of the fold is:
-      && ≣ true
-      || ≣ false
-      ,  ≣ void()
-    For any operator not listed above, an unary fold expression with an empty parameter pack is ill-formed.
-  </aside>
+    <p><small>A gentleperson-programmer is someone who knows this fact but chooses not to exercise it. Especially when combined with operator overloading.</small></p>
+  </section>
+  <section>
+    <h2>Unary fold expressions</h2>
+    <p>If the parameter pack is empty then the value of the fold is:
+      <table>
+        <tr><td><code>&amp;&amp;</code></td><td>≣</td><td><code>true</code></tr>
+        <tr><td><code>||</code></td><td>≣</td><td><code>false</code></tr>
+        <tr><td><code>,</code> </td><td>≣</td><td><code>void()</code></tr>
+      </table>
+    <p>For any operator not listed above, an unary fold expression with an empty parameter pack is ill-formed.</p>
   </section>
 </section>
 
