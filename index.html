@@ -514,17 +514,18 @@ std::transform(std::par_unseq, xfirst, xlast, yfirst,
     </code>
   </section>
   <section>
-    <p>Execution policies:</p>
-    <ul>
-      <li><code>std::seq</code> indeterminately sequenced in the calling thread
-      <li><code>std::par</code> indeterminately sequenced with respect to each other within the same thread
-      <li><code>std::par_unseq</code> unsequenced with respect to each other and possibly interleaved
-    </ul>
+    <h2>Execution policies</h2>
+    <table style="font-size:80%">
+      <tr><td><code>std::seq</code></td><td>indeterminately sequenced in the calling thread</td></tr>
+      <tr><td><code>std::par</code></td><td>indeterminately sequenced with respect to each other within the same thread</td></tr>
+      <tr><td><code>std::par_unseq</code></td><td>unsequenced with respect to each other and possibly interleaved</td></tr>
+    </table>
     <aside class="notes">"Executors" will expand execution policies</aside>
   </section>
   <section>
     <p>See <a href="https://www.youtube.com/watch?v=6Z3_qaFYF84">Hartmut Kaiser's CppCon talk</a>!<small>(<a href="https://github.com/CppCon/CppCon2016/blob/master/Presentations/Parallelism%20in%20Modern%20C++/Parallelism%20in%20Modern%20C++%20-%20Hartmut%20Kaiser%20-%20CppCon%202016.pdf">slides</a>)</small></p>
     <p><small>He dives deep into C++ parallel algorithms, their performance, and where he thinks they'll go. Especially cool: parallel algorithms combined with <code>auto</code>-lambda, SIMD, executors, and coroutines.</small></p>
+    <p><small><code>mind == 💥💥💥</code></small></p>
   </section>
 </section>
 
